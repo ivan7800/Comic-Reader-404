@@ -1,0 +1,20 @@
+{
+  "name": "comic-reader-404-qa",
+  "version": "2.3.0",
+  "private": true,
+  "description": "QA-only tooling for Comic Reader 404 Deluxe. The application itself has no npm runtime dependency.",
+  "scripts": {
+    "qa:e2e": "python3 tests/e2e.py",
+    "qa:axe": "python3 tests/axe_audit.py",
+    "qa:lighthouse": "node tests/lighthouse.mjs",
+    "qa:full": "npm run qa:e2e && npm run qa:axe && npm run qa:lighthouse"
+  },
+  "devDependencies": {
+    "axe-core": "4.12.1",
+    "lighthouse": "13.4.1"
+  },
+  "engines": {
+    "node": ">=22.19"
+  },
+  "type": "module"
+}

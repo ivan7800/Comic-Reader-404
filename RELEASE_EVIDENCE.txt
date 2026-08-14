@@ -1,0 +1,10 @@
+Comic Reader 404 v2.4.0
+RELEASE CHECK: PASS
+runtime-smoke: PASS · botón Importar + CBZ + lector + ajustes + móvil
+CBZ smoke: PASS
+CBR smoke: PASS
+Static check: PASS
+Contrast check: PASS
+CBR vendor Git blob SHA-1: 980c8c61186c66ceb29e82046c596d211762e8dd
+Runtime production: classic bundle; no type="module" in index.html
+PWA recovery: reset.html

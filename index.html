@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es" data-theme="noir">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0c">
+  <meta name="description" content="Comic Reader 404 Deluxe: biblioteca y lector local-first de CBZ, CBR, PDF e imágenes, optimizado para GitHub Pages.">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark light">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; frame-src 'self' blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Comic Reader 404 · Deluxe 2.4</title>
+  <link rel="manifest" href="manifest.webmanifest?v=2.4.0">
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css?v=2.4.0">
+  <script defer src="vendor/jszip.min.js?v=2.4.0"></script>
+  <script defer src="vendor/unrarit.classic.js?v=2.4.0"></script>
+  <script defer src="js/app.bundle.js?v=2.4.0"></script>
+</head>
+<body data-runtime="loading">
+
+  <div id="updateBanner" class="update-banner" role="region" aria-live="polite" aria-label="Actualización disponible" hidden>
+    <span><strong>Nueva versión disponible.</strong> Actualiza para aplicar las mejoras sin perder tu biblioteca.</span>
+    <button id="updateNowBtn" class="primary-btn" type="button">Actualizar ahora</button>
+  </div>
+  <noscript><div class="noscript-warning">Comic Reader 404 necesita JavaScript para abrir y procesar cómics localmente.</div></noscript>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <button class="brand" id="homeBtn" type="button" aria-label="Ir a la biblioteca">
+        <span class="brand-mark">404</span>
+        <span><strong>COMIC READER</strong><small>Deluxe 2.4 · Local Comic Library</small></span>
+      </button>
+      <nav class="top-actions" aria-label="Acciones principales">
+        <button id="searchBtn" class="icon-btn" type="button" aria-label="Buscar" aria-controls="searchField" aria-expanded="false" title="Buscar">⌕</button>
+        <button id="settingsBtn" class="icon-btn" type="button" aria-label="Ajustes" title="Ajustes">⚙</button>
+        <button id="importFolderBtn" class="secondary-btn desktop-action" type="button">Carpeta</button>
+        <button id="importBtn" class="primary-btn" type="button">＋ Importar</button>
+      </nav>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="libraryView" class="view view-library" aria-labelledby="libraryTitle">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">DELUXE 2.3 · PRIVADA · LOCAL-FIRST</p>
+            <h1 id="libraryTitle">Tu colección, organizada como merece.</h1>
+            <p>CBZ, CBR, PDF e imágenes con series, volúmenes, ComicInfo.xml, progreso, estanterías y marcadores.</p>
+            <div id="libraryStats" class="hero-stats" aria-label="Resumen de biblioteca"></div>
+          </div>
+          <button id="heroImportBtn" class="hero-import" type="button">
+            <span class="hero-import-icon">＋</span>
+            <span><strong>Abrir o importar cómics</strong><small>Selección múltiple · procesado local</small></span>
+          </button>
+        </div>
+
+        <div class="library-toolbar">
+          <div class="segmented library-nav" role="tablist" aria-label="Vista de biblioteca">
+            <button id="tabAll" class="segment active" data-view="all" type="button" role="tab" aria-selected="true" aria-controls="libraryContent">Biblioteca</button>
+            <button id="tabSeries" class="segment" data-view="series" type="button" role="tab" aria-selected="false" aria-controls="libraryContent" tabindex="-1">Series</button>
+            <button id="tabShelves" class="segment" data-view="shelves" type="button" role="tab" aria-selected="false" aria-controls="libraryContent" tabindex="-1">Estanterías</button>
+            <button id="tabHistory" class="segment" data-view="history" type="button" role="tab" aria-selected="false" aria-controls="libraryContent" tabindex="-1">Historial</button>
+            <button id="tabFavorite" class="segment" data-view="favorite" type="button" role="tab" aria-selected="false" aria-controls="libraryContent" tabindex="-1">Favoritos</button>
+            <button id="tabUnfinished" class="segment" data-view="unfinished" type="button" role="tab" aria-selected="false" aria-controls="libraryContent" tabindex="-1">En lectura</button>
+          </div>
+          <div class="toolbar-right">
+            <label class="search-field" id="searchField" hidden>
+              <span class="sr-only">Buscar en biblioteca</span>
+              <input id="searchInput" type="search" placeholder="Título, serie, autor, género…" autocomplete="off">
+            </label>
+            <select id="sortSelect" aria-label="Ordenar biblioteca">
+              <option value="recent">Más recientes</option>
+              <option value="title">Título</option>
+              <option value="series">Serie / número</option>
+              <option value="progress">Progreso</option>
+              <option value="year">Año</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <div class="empty-art" aria-hidden="true"><span>404</span></div>
+          <h2>Tu biblioteca está esperando.</h2>
+          <p>Importa uno o varios cómics. Si contienen <strong>ComicInfo.xml</strong>, la app organizará automáticamente serie, número, autores, editorial, género y dirección de lectura.</p>
+          <button id="emptyImportBtn" class="primary-btn" type="button">Importar cómics</button>
+        </div>
+
+        <div id="libraryContent" role="tabpanel" aria-labelledby="tabAll" tabindex="0" aria-live="polite">
+          <div id="libraryGrid" class="library-grid"></div>
+        </div>
+      </section>
+
+      <section id="readerView" class="view reader-view" hidden aria-label="Lector de cómics">
+        <header class="reader-topbar" id="readerTopbar">
+          <button id="backBtn" class="icon-btn" type="button" aria-label="Volver a la biblioteca">←</button>
+          <div class="reader-title-wrap">
+            <strong id="readerTitle">Cómic</strong>
+            <small id="readerCounter" aria-live="polite">Página 1 / 1</small>
+          </div>
+          <div class="reader-top-actions">
+            <button id="bookmarksBtn" class="icon-btn" type="button" aria-label="Ver marcadores" title="Marcadores">☷</button>
+            <button id="bookmarkBtn" class="icon-btn" type="button" aria-label="Marcar esta página" aria-pressed="false" title="Marcar página">◇</button>
+            <button id="favoriteBtn" class="icon-btn" type="button" aria-label="Marcar favorito" aria-pressed="false" title="Favorito">☆</button>
+            <button id="fullscreenBtn" class="icon-btn" type="button" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
+          </div>
+        </header>
+
+        <div id="readerStage" class="reader-stage" tabindex="0" aria-label="Área de lectura">
+          <button id="prevHotspot" class="page-hotspot prev" type="button" tabindex="-1" aria-hidden="true"></button>
+          <div id="pageCanvas" class="page-canvas"></div>
+          <button id="nextHotspot" class="page-hotspot next" type="button" tabindex="-1" aria-hidden="true"></button>
+        </div>
+
+        <footer class="reader-controls" id="readerControls">
+          <button id="prevBtn" class="control-btn" type="button" aria-label="Página anterior">←</button>
+          <input id="pageRange" class="page-range" type="range" min="1" max="1" value="1" aria-label="Página">
+          <button id="nextBtn" class="control-btn" type="button" aria-label="Página siguiente">→</button>
+          <div class="reader-mode-actions">
+            <button class="mode-btn active" data-mode="single" type="button" aria-label="Página única" aria-pressed="true" title="Página única">1P</button>
+            <button class="mode-btn" data-mode="double" type="button" aria-label="Doble página" aria-pressed="false" title="Doble página">2P</button>
+            <button class="mode-btn" data-mode="webtoon" type="button" aria-label="Lectura vertical Webtoon" aria-pressed="false" title="Scroll vertical">⇣</button>
+            <button id="rtlBtn" class="mode-btn" type="button" aria-label="Lectura manga de derecha a izquierda" aria-pressed="false" title="Lectura manga de derecha a izquierda">RTL</button>
+            <button id="fitBtn" class="mode-btn" type="button" aria-label="Ajustar página al ancho" aria-pressed="false" title="Ajustar página al ancho">↔</button>
+          </div>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <!-- Se mantienen renderizados (pero visualmente ocultos) para máxima compatibilidad con Safari/iOS/PWA. -->
+  <input id="fileInput" class="native-file-input" type="file" accept=".cbz,.zip,.cbr,.rar,.pdf,.jpg,.jpeg,.png,.webp,.avif,.gif,image/jpeg,image/png,image/webp,image/avif,image/gif" multiple tabindex="-1" aria-hidden="true">
+  <input id="folderInput" class="native-file-input" type="file" accept=".cbz,.zip,.cbr,.rar,.pdf,.jpg,.jpeg,.png,.webp,.avif,.gif,image/jpeg,image/png,image/webp,image/avif,image/gif" webkitdirectory multiple tabindex="-1" aria-hidden="true">
+  <input id="backupInput" class="native-file-input" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true">
+
+  <dialog id="settingsDialog" class="panel-dialog wide-dialog" aria-labelledby="settingsTitle">
+    <form method="dialog">
+      <header><div><p class="dialog-kicker">COMIC READER 404</p><h2 id="settingsTitle">Ajustes</h2></div><button class="icon-btn" value="cancel" aria-label="Cerrar">×</button></header>
+      <div class="settings-grid">
+        <label>Tema
+          <select id="themeSelect">
+            <option value="noir">Noir</option><option value="oled">OLED</option><option value="paper">Manga Paper</option><option value="retro">Retro Comics</option><option value="universe">Universe 404</option>
+          </select>
+        </label>
+        <label>Modo inicial
+          <select id="defaultModeSelect"><option value="single">Página única</option><option value="double">Doble página</option><option value="webtoon">Webtoon</option></select>
+        </label>
+        <label class="toggle-row"><span>Lectura manga (RTL) por defecto</span><input id="defaultRtl" type="checkbox"></label>
+        <label class="toggle-row"><span>Ocultar controles al leer</span><input id="autoHide" type="checkbox" checked></label>
+      </div>
+      <div class="storage-note"><strong>Privacidad</strong><p>Los cómics se procesan en tu dispositivo. Se conservan únicamente metadatos, portada reducida, progreso, historial, marcadores y preferencias.</p></div>
+      <section class="settings-section"><h3>Copia de seguridad</h3><p>Exporta o restaura biblioteca, estanterías, progreso y marcadores. Los archivos de cómic no se incluyen.</p><div class="button-row"><button id="exportBackupBtn" class="secondary-btn" type="button">Exportar JSON</button><button id="importBackupBtn" class="secondary-btn" type="button">Restaurar JSON</button></div></section>
+      <menu><button value="cancel" class="secondary-btn">Cerrar</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="metadataDialog" class="panel-dialog wide-dialog" aria-labelledby="metadataTitle">
+    <form id="metadataForm" method="dialog">
+      <header><div><p class="dialog-kicker">FICHA LOCAL</p><h2 id="metadataTitle">Editar metadatos</h2></div><button class="icon-btn" value="cancel" aria-label="Cerrar">×</button></header>
+      <div class="metadata-layout">
+        <img id="metadataCover" class="metadata-cover" alt="Portada">
+        <div class="metadata-fields">
+          <label>Título<input id="metaTitle" name="title" required maxlength="160"></label>
+          <div class="field-pair"><label>Serie<input id="metaSeries" name="series" maxlength="160"></label><label>Número<input id="metaNumber" name="number" maxlength="24"></label></div>
+          <div class="field-pair"><label>Volumen<input id="metaVolume" name="volume" maxlength="24"></label><label>Año<input id="metaYear" name="year" inputmode="numeric" maxlength="4"></label></div>
+          <label>Autor / guionista<input id="metaWriter" name="writer" maxlength="220"></label>
+          <label>Editorial<input id="metaPublisher" name="publisher" maxlength="160"></label>
+          <label>Género<input id="metaGenre" name="genre" maxlength="240"></label>
+          <label>Estantería<input id="metaShelf" name="shelf" list="shelfOptions" maxlength="80" placeholder="Ej. Manga, Marvel, Pendientes…"><datalist id="shelfOptions"></datalist></label>
+          <label>Resumen<textarea id="metaSummary" name="summary" rows="5" maxlength="3000"></textarea></label>
+          <label class="toggle-row"><span>Lectura de derecha a izquierda</span><input id="metaRtl" name="rtl" type="checkbox"></label>
+        </div>
+      </div>
+      <div class="dialog-actions split-actions"><button id="deleteBookBtn" class="danger-btn" type="button">Eliminar de biblioteca</button><div><button value="cancel" class="secondary-btn">Cancelar</button><button id="saveMetadataBtn" class="primary-btn" type="submit" value="default">Guardar cambios</button></div></div>
+    </form>
+  </dialog>
+
+  <dialog id="bookmarksDialog" class="panel-dialog" aria-labelledby="bookmarksTitle">
+    <form method="dialog">
+      <header><div><p class="dialog-kicker">LECTURA</p><h2 id="bookmarksTitle">Marcadores</h2></div><button class="icon-btn" value="cancel" aria-label="Cerrar">×</button></header>
+      <div id="bookmarksList" class="bookmarks-list"></div>
+      <menu><button value="cancel" class="secondary-btn">Cerrar</button></menu>
+    </form>
+  </dialog>
+
+  <dialog id="loadingDialog" class="loading-dialog" aria-labelledby="loadingTitle" aria-describedby="loadingText"><div class="loader" aria-hidden="true"></div><h2 id="loadingTitle">Procesando biblioteca…</h2><p id="loadingText">Analizando archivos.</p><progress id="loadingProgress" max="100" value="0" aria-label="Progreso de importación"></progress></dialog>
+
+  <dialog id="errorDialog" class="panel-dialog" aria-labelledby="errorTitle" aria-describedby="errorText"><form method="dialog"><header><h2 id="errorTitle">No se pudo completar</h2><button class="icon-btn" value="cancel" aria-label="Cerrar">×</button></header><p id="errorText"></p><menu><button class="primary-btn" value="ok">Entendido</button></menu></form></dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <template id="comicCardTemplate">
+    <article class="comic-card">
+      <button class="cover-button" type="button">
+        <div class="cover-wrap"><img class="cover" alt=""><span class="format-badge"></span><span class="read-badge" hidden>LEÍDO</span></div>
+        <div class="card-copy"><strong class="card-title"></strong><span class="card-series"></span><span class="card-meta"></span><div class="progress-track"><i></i></div></div>
+      </button>
+      <div class="card-actions"><button class="fav-mini" type="button" aria-label="Alternar favorito">☆</button><button class="more-mini" type="button" aria-label="Editar metadatos">⋯</button></div>
+    </article>
+  </template>
+</body>
+</html>
