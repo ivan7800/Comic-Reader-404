@@ -50,6 +50,18 @@ with tempfile.TemporaryDirectory() as td, sync_playwright() as p:
     chooser_info.value.set_files(str(cbz))
     page.wait_for_function("document.querySelector('#readerView') && !document.querySelector('#readerView').hidden", timeout=10000)
     assert 'Runtime Smoke' in page.locator('#readerTitle').inner_text()
+    page.wait_for_function("document.querySelector('#pageCanvas img.loaded')", timeout=5000)
+    sizing = page.evaluate("""() => {
+      const stage = document.querySelector('#readerStage').getBoundingClientRect();
+      const img = document.querySelector('#pageCanvas img.loaded').getBoundingClientRect();
+      return {stageW: stage.width, stageH: stage.height, imgW: img.width, imgH: img.height};
+    }""")
+    assert sizing['imgW'] >= sizing['stageW'] * 0.95, sizing
+    assert sizing['imgH'] >= sizing['stageH'] * 0.95, sizing
+    page.locator('#fitBtn').click()
+    assert page.locator('#readerStage').evaluate("el => el.classList.contains('fit-width')")
+    page.locator('#fitBtn').click()
+    assert not page.locator('#readerStage').evaluate("el => el.classList.contains('fit-width')")
     page.locator('#backBtn').click()
     page.wait_for_function("document.querySelector('#libraryView') && !document.querySelector('#libraryView').hidden")
     page.locator('#settingsBtn').click()

@@ -1,4 +1,4 @@
-# Comic Reader 404 Deluxe · v2.4.0
+# Comic Reader 404 Deluxe · v2.5.0
 
 PWA estática, privada y local-first para leer y organizar cómics propios en **CBZ/ZIP, CBR/RAR, PDF e imágenes**. Está diseñada para GitHub Pages y no necesita backend, cuenta ni compilación.
 
@@ -178,3 +178,8 @@ La v2.3 usaba ES Modules como runtime. En `file://`, esos imports pueden quedar 
 ### Si una versión antigua queda bloqueada
 
 Abre `reset.html`, pulsa **Restablecer PWA** y vuelve a la aplicación. Esta operación elimina solo el service worker y las cachés `comic-reader-404-*`; no borra la biblioteca almacenada en `localStorage`.
+
+### Ajuste de página
+- **Pantalla** (predeterminado): amplía o reduce la página para ocupar al máximo el área útil, manteniendo la proporción.
+- **Ancho**: usa todo el ancho disponible y permite desplazamiento vertical.
+- En móvil, todos los controles de lectura se muestran en dos filas para evitar botones fuera de pantalla.
