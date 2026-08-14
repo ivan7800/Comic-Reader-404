@@ -1,4 +1,4 @@
-# Comic Reader 404 — QA Status v2.4.0
+# Comic Reader 404 — QA Status v2.5.0
 
 ## Estado
 
@@ -29,3 +29,9 @@ La v2.3 cargaba la lógica principal con `type="module"` y imports ES. En ejecuc
 ## Limitación de prueba
 
 El entorno de QA bloquea navegación directa a `file://` y localhost con `ERR_BLOCKED_BY_ADMINISTRATOR`, por lo que el flujo del runtime se ejecutó en Chromium mediante `set_content` con los mismos HTML/CSS/JS y un shim de Storage para el origen opaco. La compatibilidad estructural `file://` se basa además en no usar ya módulos ES ni `import()` para el runtime principal/CBR.
+
+## v2.5.0 — Reader Fit Fix
+- PASS: modo pantalla escala la página para ocupar >=95% del área del lector en smoke móvil.
+- PASS: cambio Pantalla ↔ Ancho.
+- PASS: barra móvil en dos filas; 1P/2P/Webtoon/RTL/Ajuste visibles.
+- PASS: RELEASE CHECK completo.

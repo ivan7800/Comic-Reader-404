@@ -1,11 +1,11 @@
 import {
   loadLibrary, loadSettings, saveSettings, upsertBook, patchBook, deleteBook, findBook,
   loadHistory, addHistory, getShelves, toggleBookmark, exportBackup, importBackup,
-} from './storage.js?v=2.4.0';
+} from './storage.js?v=2.5.0';
 import {
   bookId, baseName, blobToDataUrl, placeholderCover, naturalCompare, imageCollectionDescriptor,
-} from './utils.js?v=2.4.0';
-import { importComic, importImages, ensurePage, evictPage, releaseComic } from './importers.js?v=2.4.0';
+} from './utils.js?v=2.5.0';
+import { importComic, importImages, ensurePage, evictPage, releaseComic } from './importers.js?v=2.5.0';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];

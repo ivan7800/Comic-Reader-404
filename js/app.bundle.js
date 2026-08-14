@@ -1,4 +1,4 @@
-/* Comic Reader 404 v2.4.0 runtime bundle. HTTP(S) + file:// */
+/* Comic Reader 404 v2.5.0 runtime bundle. HTTP(S) + file:// */
 'use strict';
 
 /* === utils.js === */

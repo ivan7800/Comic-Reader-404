@@ -1,5 +1,5 @@
-import { imageExt, naturalCompare, mimeFromName, formatOf } from './utils.js?v=2.4.0';
-import { parseComicInfo } from './metadata.js?v=2.4.0';
+import { imageExt, naturalCompare, mimeFromName, formatOf } from './utils.js?v=2.5.0';
+import { parseComicInfo } from './metadata.js?v=2.5.0';
 
 const MAX_PAGES = 5000;
 const MAX_PAGE_BYTES = 100 * 1024 * 1024;
@@ -261,7 +261,7 @@ function validateRarEntries(entries) {
 let enginePromise;
 async function loadUnrarEngine() {
   if (enginePromise) return enginePromise;
-  enginePromise = import('../vendor/unrarit.module.js?v=2.4.0').catch(() => {
+  enginePromise = import('../vendor/unrarit.module.js?v=2.5.0').catch(() => {
     enginePromise = null;
     throw new Error('No se pudo cargar el motor CBR local. Ejecuta RELEASE_CHECK para comprobar su integridad o PREPARE_GITHUB para restaurarlo.');
   });

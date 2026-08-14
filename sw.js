@@ -1,10 +1,10 @@
 const CACHE_PREFIX = 'comic-reader-404-';
-const VERSION = '2.4.0';
+const VERSION = '2.5.0';
 const CACHE = `${CACHE_PREFIX}v${VERSION}`;
 const CORE = [
-  './', './index.html', './reset.html', './css/app.css?v=2.4.0',
-  './js/app.bundle.js?v=2.4.0', './vendor/jszip.min.js?v=2.4.0',
-  './vendor/unrarit.classic.js?v=2.4.0', './manifest.webmanifest?v=2.4.0',
+  './', './index.html', './reset.html', './css/app.css?v=2.5.0',
+  './js/app.bundle.js?v=2.5.0', './vendor/jszip.min.js?v=2.5.0',
+  './vendor/unrarit.classic.js?v=2.5.0', './manifest.webmanifest?v=2.5.0',
   './assets/icons/icon.svg', './assets/icons/icon-192.png', './assets/icons/icon-512.png',
 ];
 

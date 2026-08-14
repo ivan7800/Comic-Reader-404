@@ -1,4 +1,4 @@
-Comic Reader 404 v2.4.0
+Comic Reader 404 v2.5.0
 RELEASE CHECK: PASS
 runtime-smoke: PASS · botón Importar + CBZ + lector + ajustes + móvil
 CBZ smoke: PASS
