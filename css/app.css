@@ -37,3 +37,33 @@ button:disabled{cursor:not-allowed;opacity:.48;transform:none!important}
 .view-library.drag-active::before{content:"Suelta los cómics para importarlos";position:fixed;inset:82px 18px 18px;z-index:80;display:grid;place-items:center;border:2px dashed var(--accent);border-radius:22px;background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--text);font-size:clamp(1.05rem,3vw,1.7rem);font-weight:900;letter-spacing:.01em;pointer-events:none;backdrop-filter:blur(8px)}
 
 .startup-error{position:fixed;z-index:10000;left:12px;right:12px;top:12px;padding:14px 16px;border:1px solid #ff5c5c;border-radius:12px;background:#2a0d0d;color:#fff;font-weight:700;box-shadow:0 10px 40px #0008}
+
+/* === Ultimate 3.0 === */
+.layout-switcher{display:flex;gap:.3rem}.layout-btn.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+#libraryContent[data-layout="list"] .library-grid{display:grid;grid-template-columns:1fr;gap:8px;max-width:1000px}
+#libraryContent[data-layout="list"] .comic-card{display:grid;grid-template-columns:90px minmax(0,1fr);min-height:126px;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:8px}
+#libraryContent[data-layout="list"] .cover-button{display:grid;grid-template-columns:74px 1fr;text-align:left;gap:14px;align-items:center}
+#libraryContent[data-layout="list"] .cover-wrap{width:74px;aspect-ratio:2/3}
+#libraryContent[data-layout="list"] .card-copy{padding:0;align-self:center}#libraryContent[data-layout="list"] .card-actions{right:10px;bottom:10px}
+#libraryContent[data-layout="shelf"] .library-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:26px 12px;padding:22px;border-radius:18px;background:linear-gradient(180deg,color-mix(in srgb,var(--surface2) 70%,transparent),color-mix(in srgb,var(--surface) 75%,transparent));box-shadow:inset 0 -10px 0 color-mix(in srgb,var(--line) 80%,transparent)}
+#libraryContent[data-layout="shelf"] .card-copy{padding-top:.45rem}#libraryContent[data-layout="shelf"] .card-meta{display:none}
+.v3-status-badge{position:absolute;left:8px;bottom:8px;padding:.25rem .43rem;border-radius:7px;font-size:.57rem;font-weight:900;background:rgba(0,0,0,.75);color:#fff;letter-spacing:.04em}.v3-status-badge[data-status="reading"]{background:#1b6f8f}.v3-status-badge[data-status="finished"]{background:#237a45}.v3-status-badge[data-status="abandoned"]{background:#7a3b3b}.v3-status-badge[data-status="new"]{background:#6750a4}
+.series-toggle{margin-left:auto;padding:.45rem .7rem}.series-collapsed .library-grid .comic-card:not(:first-child){display:none}.series-collapsed .library-grid{grid-template-columns:minmax(150px,220px)}
+.zoom-controls{display:flex;gap:.3rem;margin-left:.15rem}.zoom-controls .zoom-btn{min-width:42px}.zoom-controls #zoomResetBtn{min-width:58px;font-variant-numeric:tabular-nums}
+.reader-stage.zoomed{align-items:flex-start;justify-content:flex-start}.reader-stage.zoomed .page-canvas{flex:0 0 auto;max-width:none;max-height:none}.reader-stage.zoomed .page-hotspot{display:none}
+.page-browser-dialog{width:min(94vw,1000px)}.page-browser-dialog form{min-width:0}.page-browser-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;max-height:65dvh;overflow:auto;padding:12px 2px}.page-thumb{position:relative;border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:4px;cursor:pointer;min-height:140px}.page-thumb img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:6px;background:var(--surface3)}.page-thumb span{position:absolute;right:7px;bottom:7px;background:rgba(0,0,0,.76);color:#fff;border-radius:6px;padding:.18rem .35rem;font-size:.65rem}.page-thumb:hover,.page-thumb:focus-visible{outline:2px solid var(--accent);outline-offset:1px}.page-thumb-error{border-color:#b64035}
+.v3-setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.v3-setting-grid label:not(.toggle-row){display:grid;gap:.4rem;color:var(--muted)}.linked-folder-card{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:12px}.linked-folder-card strong,.linked-folder-card small{display:block}.linked-folder-card small{color:var(--muted);margin-top:3px}.v3-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.v3-stats div{padding:10px;border-radius:10px;background:var(--surface3)}.v3-stats strong,.v3-stats span{display:block}.v3-stats span{font-size:.68rem;color:var(--muted);margin-top:2px}
+@media(max-width:900px){.zoom-controls{grid-column:1/-1;width:100%;justify-content:center}.reader-controls{flex-wrap:wrap}.v3-setting-grid{grid-template-columns:1fr}.linked-folder-card{align-items:stretch;flex-direction:column}.v3-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.toolbar-right{display:grid;grid-template-columns:auto 1fr;gap:8px}.toolbar-right .search-field{grid-column:1/-1}.layout-switcher{align-self:center}.reader-controls>.reader-mode-actions{grid-template-columns:repeat(6,minmax(0,1fr))}.zoom-controls{display:grid;grid-template-columns:repeat(3,1fr);margin:0}.zoom-controls .zoom-btn{width:100%}.page-browser-grid{grid-template-columns:repeat(3,1fr);gap:7px}.page-thumb{min-height:120px}.series-toggle{font-size:.72rem}}
+.reader-stage{--reader-brightness:100%}.reader-stage .page-canvas img{filter:brightness(var(--reader-brightness))}.reader-stage[data-reader-bg="black"]{background:#000}.reader-stage[data-reader-bg="gray"]{background:#303238}.reader-stage[data-reader-bg="white"]{background:#f5f4f0}.reader-stage[data-reader-bg="white"] .page-canvas img{box-shadow:0 8px 30px rgba(0,0,0,.22)}
+.page-thumb.current{outline:3px solid var(--accent);outline-offset:1px}.v3-setting-grid output{font-size:.72rem;color:var(--muted)}
+@media(max-width:650px){
+  .reader-controls{width:100vw;max-width:100vw;min-width:0;box-sizing:border-box;overflow:hidden}
+  .reader-controls>*{min-width:0}
+  .reader-controls>.reader-mode-actions,.reader-controls>#zoomControls{width:auto;max-width:100%;min-width:0}
+  .reader-controls>.reader-mode-actions .mode-btn,.reader-controls>#zoomControls .mode-btn{min-width:0;max-width:100%}
+}
+#statusFilter{min-width:155px}
+@media(max-width:650px){#statusFilter{grid-column:1/-1;width:100%}}
+#statusFilter{min-width:155px}
+@media(max-width:650px){#statusFilter{grid-column:1/-1;width:100%}}

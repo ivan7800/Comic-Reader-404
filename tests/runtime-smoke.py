@@ -41,10 +41,15 @@ with tempfile.TemporaryDirectory() as td, sync_playwright() as p:
       Object.defineProperty(storage, 'length', { get: () => data.size });
       Object.defineProperty(window, 'localStorage', { value: storage, configurable: true });
     }""")
-    for rel in ['vendor/jszip.min.js','vendor/unrarit.classic.js','js/app.bundle.js']:
+    page.evaluate("localStorage.setItem('cr404.settings.v2', JSON.stringify({theme:'noir',defaultMode:'single',rtl:false,autoHide:false,fit:'contain'}))")
+    for rel in ['vendor/jszip.min.js','vendor/unrarit.classic.js','js/app.bundle.js','js/v3-enhancements.js']:
         page.add_script_tag(content=(ROOT/rel).read_text(encoding='utf-8'))
     page.wait_for_timeout(100)
     assert page.locator('body').get_attribute('data-runtime') == 'ready'
+    assert page.locator('body').get_attribute('data-ultimate') == '3.0'
+    assert page.locator('#pageBrowserBtn').count() == 1
+    assert page.locator('#smartModeBtn').count() == 1
+    assert page.locator('#zoomControls').count() == 1
     with page.expect_file_chooser() as chooser_info:
         page.locator('#importBtn').click()
     chooser_info.value.set_files(str(cbz))
@@ -58,15 +63,27 @@ with tempfile.TemporaryDirectory() as td, sync_playwright() as p:
     }""")
     assert sizing['imgW'] >= sizing['stageW'] * 0.95, sizing
     assert sizing['imgH'] >= sizing['stageH'] * 0.95, sizing
+    fit_bounds = page.locator('#fitBtn').evaluate("e=>{const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right}}")
+    assert fit_bounds['top'] >= 0 and fit_bounds['bottom'] <= 844 and fit_bounds['left'] >= 0 and fit_bounds['right'] <= 390, fit_bounds
     page.locator('#fitBtn').click()
     assert page.locator('#readerStage').evaluate("el => el.classList.contains('fit-width')")
     page.locator('#fitBtn').click()
     assert not page.locator('#readerStage').evaluate("el => el.classList.contains('fit-width')")
+    page.locator('#zoomInBtn').click()
+    assert page.locator('#zoomResetBtn').inner_text() == '125%'
+    page.locator('#zoomResetBtn').click()
+    assert page.locator('#zoomResetBtn').inner_text() == '100%'
+    page.locator('#pageBrowserBtn').click()
+    assert page.locator('#pageBrowserDialog').evaluate('(d)=>d.open')
+    assert page.locator('#pageBrowserGrid .page-thumb').count() == 2
+    page.locator('#pageBrowserDialog').evaluate('(d)=>d.close()')
     page.locator('#backBtn').click()
     page.wait_for_function("document.querySelector('#libraryView') && !document.querySelector('#libraryView').hidden")
     page.locator('#settingsBtn').click()
     assert page.locator('#settingsDialog').evaluate('(d)=>d.open')
+    assert page.locator('#v3SettingsSection').count() == 1
+    assert page.locator('#layoutSwitcher').count() == 1
     assert not page.evaluate('document.documentElement.scrollWidth > document.documentElement.clientWidth')
     assert not errors, errors
     browser.close()
-print('runtime-smoke: PASS · botón Importar + CBZ + lector + ajustes + móvil')
+print('runtime-smoke: PASS · Importar + CBZ + zoom + miniaturas + Ultimate UI + móvil')

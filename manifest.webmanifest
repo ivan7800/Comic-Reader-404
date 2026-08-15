@@ -1,9 +1,9 @@
 {
   "id":"./",
-  "name":"Comic Reader 404 Deluxe",
+  "name":"Comic Reader 404 Ultimate",
   "short_name":"Comics 404",
   "lang":"es",
-  "description":"Biblioteca y lector local de cómics CBZ, CBR, PDF e imágenes, con ComicInfo.xml, series, progreso y marcadores.",
+  "description":"Biblioteca y lector local-first de cómics CBZ, CBR, PDF e imágenes con zoom, miniaturas, series, ComicInfo.xml, progreso, marcadores y PWA offline.",
   "start_url":"./",
   "scope":"./",
   "display":"standalone",

@@ -1,37 +1,42 @@
-# Comic Reader 404 — QA Status v2.5.0
+# Comic Reader 404 Ultimate — QA Status v3.0.0
 
 ## Estado
 
-- `RELEASE_CHECK`: PASS
-- Runtime clásico (`app.bundle.js`): PASS de sintaxis
-- Motor CBR clásico vendorizado: PASS de sintaxis
-- CBR vendor original: hash Git verificado `980c8c61186c66ceb29e82046c596d211762e8dd`
-- CBZ smoke: PASS
-- CBR smoke: PASS
-- Runtime smoke en Chromium: PASS
-  - arranque `data-runtime=ready`
-  - botón Importar abre FileChooser
-  - CBZ real se importa
-  - lector abre
-  - vuelta a biblioteca
-  - Ajustes abre
-  - sin errores de consola
-  - sin overflow horizontal a 390×844
+**RELEASE CHECK: PASS** en el entorno de construcción.
 
-## Causa raíz corregida
+### Pruebas ejecutadas y superadas
 
-La v2.3 cargaba la lógica principal con `type="module"` y imports ES. En ejecución `file://` esos imports pueden bloquearse por las políticas de origen del navegador, dejando el HTML visible pero sin registrar eventos: todos los botones parecen muertos. La v2.4 usa runtime clásico empaquetado para evitar esta dependencia.
+- `node --check` sobre JS, service worker y tests JS.
+- `tests/unit.test.mjs`.
+- `tests/cbz-smoke.mjs`.
+- `tests/cbr-smoke.mjs` con RAR4 real construido para QA.
+- `tests/static-check.py`.
+- `tests/contrast-check.py`.
+- `tests/runtime-smoke.py`: Importar real, CBZ, lector, ajuste, zoom, miniaturas, Ajustes y viewport móvil.
+- `tests/ultimate-smoke.py`: AUTO tablet, portada sola en 2P, pares físicos, cambio por orientación, layouts, estado manual, filtro y ausencia de overflow.
+- Integridad exacta del vendor CBR.
 
-## Recuperación PWA
+### Funciones v3 cubiertas directamente
 
-`reset.html` permite eliminar exclusivamente service workers y cachés `comic-reader-404-*` sin borrar `localStorage`.
+- Runtime Ultimate cargado.
+- Botón Importar abre selector.
+- CBZ abre en lector.
+- Zoom 100 → 125 → 100.
+- Diálogo de miniaturas.
+- Controles móviles dentro del viewport.
+- AUTO tablet 1024×768 → 2P.
+- Portada sola; siguiente spread = páginas internas emparejadas.
+- 768×1024 → 1P.
+- Grid/List/Shelf.
+- Estado Abandonado + filtro correspondiente.
 
-## Limitación de prueba
+### Mantenidas pero no ejecutadas completamente en este entorno
 
-El entorno de QA bloquea navegación directa a `file://` y localhost con `ERR_BLOCKED_BY_ADMINISTRATOR`, por lo que el flujo del runtime se ejecutó en Chromium mediante `set_content` con los mismos HTML/CSS/JS y un shim de Storage para el origen opaco. La compatibilidad estructural `file://` se basa además en no usar ya módulos ES ni `import()` para el runtime principal/CBR.
+- axe-core completo.
+- Lighthouse completo.
+- WebKit iPhone/iPad del workflow.
+- Prueba manual en iPhone/iPad/Android físicos.
+- Instalación PWA física desde Safari/Chrome móvil.
+- File System Access con una carpeta real del usuario.
 
-## v2.5.0 — Reader Fit Fix
-- PASS: modo pantalla escala la página para ocupar >=95% del área del lector en smoke móvil.
-- PASS: cambio Pantalla ↔ Ancho.
-- PASS: barra móvil en dos filas; 1P/2P/Webtoon/RTL/Ajuste visibles.
-- PASS: RELEASE CHECK completo.
+Estas comprobaciones permanecen en la batería mantenida/CI cuando el entorno dispone de las herramientas necesarias.
