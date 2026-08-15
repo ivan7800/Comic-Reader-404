@@ -1,8 +1,8 @@
 {
   "name": "comic-reader-404-qa",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
-  "description": "QA-only tooling for Comic Reader 404 Deluxe. The application itself has no npm runtime dependency.",
+  "description": "QA-only tooling for Comic Reader 404 Ultimate. The application itself has no npm runtime dependency.",
   "scripts": {
     "qa:e2e": "python3 tests/e2e.py",
     "qa:axe": "python3 tests/axe_audit.py",

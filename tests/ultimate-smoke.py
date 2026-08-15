@@ -29,9 +29,20 @@ with tempfile.TemporaryDirectory() as td, sync_playwright() as p:
     page.on('console', lambda m: errors.append(m.text) if m.type=='error' else None)
     page.set_content(build_html(), wait_until='domcontentloaded')
     page.evaluate("""() => { const data=new Map(); const storage={getItem:k=>data.get(String(k))??null,setItem:(k,v)=>data.set(String(k),String(v)),removeItem:k=>data.delete(String(k)),clear:()=>data.clear(),key:i=>[...data.keys()][i]??null}; Object.defineProperty(storage,'length',{get:()=>data.size}); Object.defineProperty(window,'localStorage',{value:storage,configurable:true}); }""")
+    page.evaluate("""() => {
+      localStorage.setItem('cr404.v3.settings', JSON.stringify({libraryLayout:'invalid',smartTablet:'yes',prefetch:99,statusFilter:'broken',readerBrightness:999,readerBackground:'javascript'}));
+      localStorage.setItem('cr404.v3.statuses', JSON.stringify({bad:'<script>', prototype:'hacked'}));
+      localStorage.setItem('cr404.v3.bookprefs', JSON.stringify({bad:{zoom:999,mode:'evil'}}));
+    }""")
     for rel in ['vendor/jszip.min.js','vendor/unrarit.classic.js','js/app.bundle.js','js/v3-enhancements.js']:
         page.add_script_tag(content=(ROOT/rel).read_text(encoding='utf-8'))
-    assert page.locator('body').get_attribute('data-ultimate') == '3.0'
+    assert page.locator('body').get_attribute('data-ultimate') == '3.1'
+    # Invalid persisted Ultimate data is normalized instead of poisoning the UI.
+    assert page.locator('#libraryContent').get_attribute('data-layout') == 'grid'
+    assert page.locator('#statusFilter').input_value() == 'all'
+    assert page.locator('#prefetchSetting').input_value() == '3'
+    assert page.locator('#readerBrightnessSetting').input_value() == '130'
+    assert page.locator('#readerBackgroundSetting').input_value() == 'black'
     with page.expect_file_chooser() as fc: page.locator('#importBtn').click()
     fc.value.set_files(str(cbz))
     page.wait_for_function("!document.querySelector('#readerView').hidden")

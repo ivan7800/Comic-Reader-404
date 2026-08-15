@@ -1,8 +1,8 @@
-# Comic Reader 404 Ultimate · v3.0.0
+# Comic Reader 404 Ultimate · v3.1.0
 
 PWA estática, privada y local-first para leer y organizar cómics propios en **CBZ/ZIP, CBR/RAR, PDF e imágenes**. Preparada para GitHub Pages y también funcional al abrir `index.html` directamente para las funciones que no requieren service worker.
 
-## Novedades Ultimate 3.0
+## Novedades Ultimate 3.1
 
 ### Lector
 - Zoom 75–400 % con botones `− / 100% / +`.
@@ -42,7 +42,7 @@ PWA estática, privada y local-first para leer y organizar cómics propios en **
 - PWA offline para el shell de la aplicación.
 - Service worker limitado al prefijo `comic-reader-404-`, sin borrar cachés de otras apps del mismo dominio.
 - `reset.html` permite desregistrar únicamente el SW y las cachés de Comic Reader 404 si una actualización antigua queda atascada.
-- Backup JSON incluye biblioteca, progreso, marcadores, ajustes base y preferencias Ultimate 3.0. Los archivos de cómic no se incluyen.
+- Backup JSON incluye biblioteca, progreso, marcadores, ajustes base y preferencias Ultimate 3.1. Los archivos de cómic no se incluyen.
 
 ## Estado de release
 
@@ -136,7 +136,7 @@ reset.html
 css/app.css
 js/
   app.bundle.js        # runtime base clásico
-  v3-enhancements.js   # funciones Ultimate 3.0
+  v3-enhancements.js   # funciones Ultimate 3.1
   app.js               # fuente modular mantenible
   importers.js
   metadata.js
@@ -160,7 +160,7 @@ scripts/
 - RAR sólido enorme: bloqueado preventivamente según tamaño y memoria estimada.
 - PDF: se delega al visor nativo; el progreso interno por página no se integra en la biblioteca.
 - File System Access: principalmente Chrome/Edge escritorio; existe fallback de importación normal.
-- Miniaturas: el navegador visual limita el DOM a 1.200 miniaturas en cómics extremos.
+- Miniaturas: el navegador visual mantiene una ventana de hasta 600 miniaturas alrededor de la página actual en cómics extremos.
 - Webtoon de más de 1.500 páginas degrada de forma segura a 1P para proteger memoria.
 - Ninguna emulación sustituye una última prueba manual en hardware físico.
 

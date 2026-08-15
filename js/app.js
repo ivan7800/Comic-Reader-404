@@ -1,11 +1,11 @@
 import {
   loadLibrary, loadSettings, saveSettings, upsertBook, patchBook, deleteBook, findBook,
   loadHistory, addHistory, getShelves, toggleBookmark, exportBackup, importBackup,
-} from './storage.js?v=3.0.0';
+} from './storage.js?v=3.1.0';
 import {
   bookId, baseName, blobToDataUrl, placeholderCover, naturalCompare, imageCollectionDescriptor,
-} from './utils.js?v=3.0.0';
-import { importComic, importImages, ensurePage, evictPage, releaseComic } from './importers.js?v=3.0.0';
+} from './utils.js?v=3.1.0';
+import { importComic, importImages, ensurePage, evictPage, releaseComic } from './importers.js?v=3.1.0';
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -1102,6 +1102,7 @@ function renderNoResults() {
 
 function makeCard(book) {
   const node = $('#comicCardTemplate').content.firstElementChild.cloneNode(true);
+  node.dataset.bookId = book.id;
   const coverButton = node.querySelector('.cover-button');
   coverButton.setAttribute('aria-label', `Abrir ${book.title}`);
   const cover = node.querySelector('.cover');

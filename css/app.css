@@ -38,7 +38,7 @@ button:disabled{cursor:not-allowed;opacity:.48;transform:none!important}
 
 .startup-error{position:fixed;z-index:10000;left:12px;right:12px;top:12px;padding:14px 16px;border:1px solid #ff5c5c;border-radius:12px;background:#2a0d0d;color:#fff;font-weight:700;box-shadow:0 10px 40px #0008}
 
-/* === Ultimate 3.0 === */
+/* === Ultimate 3.1 === */
 .layout-switcher{display:flex;gap:.3rem}.layout-btn.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 #libraryContent[data-layout="list"] .library-grid{display:grid;grid-template-columns:1fr;gap:8px;max-width:1000px}
 #libraryContent[data-layout="list"] .comic-card{display:grid;grid-template-columns:90px minmax(0,1fr);min-height:126px;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:8px}
@@ -67,3 +67,9 @@ button:disabled{cursor:not-allowed;opacity:.48;transform:none!important}
 @media(max-width:650px){#statusFilter{grid-column:1/-1;width:100%}}
 #statusFilter{min-width:155px}
 @media(max-width:650px){#statusFilter{grid-column:1/-1;width:100%}}
+
+/* Final audit: zoom móvil completo y movimiento reducido */
+.reader-stage.zoomed{touch-action:pan-x pan-y}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}

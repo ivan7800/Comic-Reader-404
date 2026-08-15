@@ -82,6 +82,22 @@ for asset in re.findall(r"'((?:\./)[^']+)'", sw):
 if "key.startsWith(CACHE_PREFIX)" not in sw:
     errors.append('Service worker no limita la limpieza de cachés a su propio prefijo')
 
+version_match=re.search(r"const VERSION = '([^']+)';", sw)
+if not version_match:
+    errors.append('Service worker: no se pudo detectar VERSION')
+else:
+    version=version_match.group(1)
+    package=json.loads((ROOT/'package.json').read_text(encoding='utf-8'))
+    if package.get('version') != version:
+        errors.append(f'Versión inconsistente: package.json={package.get("version")} sw={version}')
+    versioned_assets=[asset for asset in p.assets if '?v=' in asset]
+    stale=[asset for asset in versioned_assets if f'?v={version}' not in asset]
+    if stale:
+        errors.append(f'Assets con cache-busting desactualizado: {stale}')
+    e2e=(ROOT/'tests/e2e.py').read_text(encoding='utf-8')
+    if re.search(r"v2\.[0-9]+\.[0-9]+(?:-e2e)?", e2e):
+        errors.append('E2E de service worker contiene una versión 2.x hardcodeada')
+
 if not (ROOT/'.nojekyll').exists(): errors.append('Falta .nojekyll')
 if not (ROOT/'.gitignore').exists(): errors.append('Falta .gitignore')
 if not (ROOT/'vendor/unrarit.module.js').exists():

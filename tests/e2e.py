@@ -55,7 +55,12 @@ def test_sw_update(browser, app_dir, base_url):
     context=browser.new_context(**PROFILES['desktop']); page=context.new_page(); page.goto(base_url, wait_until='load')
     page.evaluate("navigator.serviceWorker.ready.then(()=>true)"); page.wait_for_timeout(600)
     if not page.evaluate('Boolean(navigator.serviceWorker.controller)'): page.reload(wait_until='load')
-    sw=app_dir/'sw.js'; original=sw.read_text(); sw.write_text(original.replace("const VERSION = '2.3.0';", "const VERSION = '2.3.0-e2e';"))
+    sw=app_dir/'sw.js'; original=sw.read_text()
+    import re
+    match=re.search(r"const VERSION = '([^']+)';", original)
+    assert_true(match, 'SW update: no se pudo detectar VERSION')
+    current_version=match.group(1); test_version=f'{current_version}-e2e'
+    sw.write_text(original.replace(f"const VERSION = '{current_version}';", f"const VERSION = '{test_version}';", 1))
     try:
         page.evaluate("navigator.serviceWorker.getRegistration().then(r=>r.update())")
         page.wait_for_function("navigator.serviceWorker.getRegistration().then(r=>Boolean(r.waiting))", timeout=15000)
@@ -64,8 +69,8 @@ def test_sw_update(browser, app_dir, base_url):
         page.wait_for_function("navigator.serviceWorker.getRegistration().then(r=>r.active && r.active.scriptURL.endsWith('/sw.js'))", timeout=15000)
         page.wait_for_timeout(600)
         keys=page.evaluate('caches.keys()')
-        assert_true(any('v2.3.0-e2e' in k for k in keys), f'SW update: caché nueva no activa: {keys}')
-        assert_true(not any(k.endswith('v2.3.0') for k in keys), f'SW update: caché antigua no eliminada: {keys}')
+        assert_true(any(f'v{test_version}' in k for k in keys), f'SW update: caché nueva no activa: {keys}')
+        assert_true(not any(k.endswith(f'v{current_version}') for k in keys), f'SW update: caché antigua no eliminada: {keys}')
     finally:
         sw.write_text(original); context.close()
 

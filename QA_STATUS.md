@@ -1,42 +1,30 @@
-# Comic Reader 404 Ultimate — QA Status v3.0.0
+# Comic Reader 404 Ultimate — QA Status v3.1.0
 
-## Estado
+## Release local
 
-**RELEASE CHECK: PASS** en el entorno de construcción.
+**RELEASE CHECK: PASS**
 
-### Pruebas ejecutadas y superadas
+### PASS ejecutado
 
-- `node --check` sobre JS, service worker y tests JS.
-- `tests/unit.test.mjs`.
-- `tests/cbz-smoke.mjs`.
-- `tests/cbr-smoke.mjs` con RAR4 real construido para QA.
-- `tests/static-check.py`.
-- `tests/contrast-check.py`.
-- `tests/runtime-smoke.py`: Importar real, CBZ, lector, ajuste, zoom, miniaturas, Ajustes y viewport móvil.
-- `tests/ultimate-smoke.py`: AUTO tablet, portada sola en 2P, pares físicos, cambio por orientación, layouts, estado manual, filtro y ausencia de overflow.
-- Integridad exacta del vendor CBR.
+- Sintaxis JS/service worker/tests JS.
+- Unit tests.
+- CBZ smoke real.
+- CBR/RAR4 smoke real.
+- Static/rutas/versiones/CSS variables.
+- Contraste WCAG principal.
+- Runtime smoke móvil: Importar, lector, fit, zoom, miniaturas y Ajustes.
+- Ultimate smoke: persistencia inválida normalizada, AUTO tablet, spread físico, layouts, estado/filtro y responsive.
+- Integridad del motor CBR.
+- CSS: 0 errores de parseo.
+- Manifest JSON válido.
+- Workflow YAML válido.
+- Shell syntax PASS.
+- Recursos críticos HTTP 200 en subruta.
 
-### Funciones v3 cubiertas directamente
+### Bloqueado/no ejecutado aquí
 
-- Runtime Ultimate cargado.
-- Botón Importar abre selector.
-- CBZ abre en lector.
-- Zoom 100 → 125 → 100.
-- Diálogo de miniaturas.
-- Controles móviles dentro del viewport.
-- AUTO tablet 1024×768 → 2P.
-- Portada sola; siguiente spread = páginas internas emparejadas.
-- 768×1024 → 1P.
-- Grid/List/Shelf.
-- Estado Abandonado + filtro correspondiente.
+- E2E HTTP completo: `ERR_BLOCKED_BY_ADMINISTRATOR` sobre localhost en este sandbox.
+- axe y Lighthouse: instalación npm no completada dentro del límite temporal del entorno.
+- Hardware físico iPhone/iPad/Android.
 
-### Mantenidas pero no ejecutadas completamente en este entorno
-
-- axe-core completo.
-- Lighthouse completo.
-- WebKit iPhone/iPad del workflow.
-- Prueba manual en iPhone/iPad/Android físicos.
-- Instalación PWA física desde Safari/Chrome móvil.
-- File System Access con una carpeta real del usuario.
-
-Estas comprobaciones permanecen en la batería mantenida/CI cuando el entorno dispone de las herramientas necesarias.
+La Action `.github/workflows/quality.yml` mantiene las pruebas E2E Chromium/WebKit, PWA offline, actualización SW, axe y Lighthouse para ejecutarlas en GitHub.

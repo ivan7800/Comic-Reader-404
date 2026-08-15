@@ -1,4 +1,4 @@
-/* Comic Reader 404 Ultimate v3.0.0 core runtime bundle. HTTP(S) + file:// */
+/* Comic Reader 404 Ultimate v3.1.0 core runtime bundle. HTTP(S) + file:// */
 'use strict';
 
 /* === utils.js === */
@@ -1933,6 +1933,7 @@ function renderNoResults() {
 
 function makeCard(book) {
   const node = $('#comicCardTemplate').content.firstElementChild.cloneNode(true);
+  node.dataset.bookId = book.id;
   const coverButton = node.querySelector('.cover-button');
   coverButton.setAttribute('aria-label', `Abrir ${book.title}`);
   const cover = node.querySelector('.cover');

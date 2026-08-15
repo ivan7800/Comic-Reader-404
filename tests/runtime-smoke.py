@@ -46,7 +46,7 @@ with tempfile.TemporaryDirectory() as td, sync_playwright() as p:
         page.add_script_tag(content=(ROOT/rel).read_text(encoding='utf-8'))
     page.wait_for_timeout(100)
     assert page.locator('body').get_attribute('data-runtime') == 'ready'
-    assert page.locator('body').get_attribute('data-ultimate') == '3.0'
+    assert page.locator('body').get_attribute('data-ultimate') == '3.1'
     assert page.locator('#pageBrowserBtn').count() == 1
     assert page.locator('#smartModeBtn').count() == 1
     assert page.locator('#zoomControls').count() == 1

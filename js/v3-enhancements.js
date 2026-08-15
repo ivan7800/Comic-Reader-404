@@ -1,4 +1,4 @@
-/* Comic Reader 404 Ultimate v3.0 enhancements. Classic script: HTTP(S) + file:// */
+/* Comic Reader 404 Ultimate v3.1 enhancements. Classic script: HTTP(S) + file:// */
 'use strict';
 
 (() => {
@@ -7,10 +7,66 @@
   const BOOK_PREFS_KEY = 'cr404.v3.bookprefs';
   const DB_NAME = 'cr404-fs-v1';
   const DB_STORE = 'handles';
-  const MAX_THUMBS = 1200;
+  const MAX_THUMBS = 600;
   const MIN_ZOOM = 0.75;
   const MAX_ZOOM = 4;
   const ZOOM_STEP = 0.25;
+
+
+  const VALID_LAYOUTS = new Set(['grid', 'list', 'shelf']);
+  const VALID_STATUSES = new Set(['new', 'reading', 'finished', 'abandoned']);
+  const VALID_BACKGROUNDS = new Set(['black', 'gray', 'white']);
+  const VALID_MODES = new Set(['single', 'double', 'webtoon']);
+
+  function finiteNumber(value, fallback, min, max) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return fallback;
+    return Math.max(min, Math.min(max, number));
+  }
+
+  function safeText(value, max = 120) {
+    return typeof value === 'string' ? value.trim().slice(0, max) : '';
+  }
+
+  function normalizeV3Settings(raw = {}) {
+    const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+    return {
+      libraryLayout: VALID_LAYOUTS.has(source.libraryLayout) ? source.libraryLayout : v3Defaults.libraryLayout,
+      smartTablet: typeof source.smartTablet === 'boolean' ? source.smartTablet : v3Defaults.smartTablet,
+      prefetch: Math.round(finiteNumber(source.prefetch, v3Defaults.prefetch, 1, 3)),
+      linkedFolderName: safeText(source.linkedFolderName, 120),
+      statusFilter: source.statusFilter === 'all' || VALID_STATUSES.has(source.statusFilter) ? source.statusFilter : 'all',
+      readerBrightness: Math.round(finiteNumber(source.readerBrightness, v3Defaults.readerBrightness, 70, 130) / 5) * 5,
+      readerBackground: VALID_BACKGROUNDS.has(source.readerBackground) ? source.readerBackground : v3Defaults.readerBackground,
+    };
+  }
+
+  function normalizeStatuses(raw) {
+    const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+    const result = Object.create(null);
+    for (const [id, status] of Object.entries(source).slice(-500)) {
+      const key = safeText(id, 160);
+      if (key && VALID_STATUSES.has(status)) result[key] = status;
+    }
+    return result;
+  }
+
+  function normalizeBookPrefs(raw) {
+    const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+    const result = Object.create(null);
+    for (const [id, pref] of Object.entries(source).slice(-500)) {
+      if (!pref || typeof pref !== 'object' || Array.isArray(pref)) continue;
+      const key = safeText(id, 160);
+      if (!key) continue;
+      const clean = {};
+      if (pref.mode && VALID_MODES.has(pref.mode)) clean.mode = pref.mode;
+      if (pref.fit === 'screen' || pref.fit === 'width') clean.fit = pref.fit;
+      if (pref.rtl === true || pref.rtl === false) clean.rtl = pref.rtl;
+      clean.zoom = finiteNumber(pref.zoom, 1, MIN_ZOOM, MAX_ZOOM);
+      result[key] = clean;
+    }
+    return result;
+  }
 
   const v3Defaults = {
     libraryLayout: 'grid',
@@ -32,22 +88,22 @@
   let thumbObserver = null;
 
   function loadV3() {
-    try { return { ...v3Defaults, ...JSON.parse(localStorage.getItem(V3_KEY) || '{}') }; }
+    try { return normalizeV3Settings(JSON.parse(localStorage.getItem(V3_KEY) || '{}')); }
     catch { return { ...v3Defaults }; }
   }
   function saveV3() {
     localStorage.setItem(V3_KEY, JSON.stringify(v3));
   }
   function loadStatuses() {
-    try { return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}') || {}; }
-    catch { return {}; }
+    try { return normalizeStatuses(JSON.parse(localStorage.getItem(STATUS_KEY) || '{}')); }
+    catch { return Object.create(null); }
   }
   function saveStatuses() {
     localStorage.setItem(STATUS_KEY, JSON.stringify(statuses));
   }
   function loadBookPrefs() {
-    try { return JSON.parse(localStorage.getItem(BOOK_PREFS_KEY) || '{}') || {}; }
-    catch { return {}; }
+    try { return normalizeBookPrefs(JSON.parse(localStorage.getItem(BOOK_PREFS_KEY) || '{}')); }
+    catch { return Object.create(null); }
   }
   function saveBookPrefs() {
     const entries = Object.entries(bookPrefs).slice(-500);
@@ -87,6 +143,7 @@
       const wrap = document.createElement('div');
       wrap.id = 'zoomControls';
       wrap.className = 'zoom-controls';
+      wrap.setAttribute('role', 'group');
       wrap.setAttribute('aria-label', 'Zoom');
       const minus = button('zoomOutBtn', '−', 'Reducir zoom');
       const reset = button('zoomResetBtn', '100%', 'Restablecer zoom');
@@ -104,6 +161,7 @@
       const switcher = document.createElement('div');
       switcher.id = 'layoutSwitcher';
       switcher.className = 'layout-switcher';
+      switcher.setAttribute('role', 'group');
       switcher.setAttribute('aria-label', 'Diseño de biblioteca');
       [['grid','▦','Cuadrícula'],['list','▤','Lista'],['shelf','▥','Estantería']].forEach(([value, icon, label]) => {
         const b = button(`layout-${value}`, icon, label);
@@ -156,18 +214,18 @@
     section.id = 'v3SettingsSection';
     section.className = 'settings-section v3-settings';
     section.innerHTML = `
-      <h3>Ultimate 3.0</h3>
+      <h3>Ultimate 3.1</h3>
       <div class="v3-setting-grid">
         <label class="toggle-row"><span>Modo tablet inteligente</span><input id="smartTabletSetting" type="checkbox"></label>
         <label>Precarga de páginas<select id="prefetchSetting"><option value="1">1 página</option><option value="2">2 páginas</option><option value="3">3 páginas</option></select></label>
-        <label>Brillo del lector<input id="readerBrightnessSetting" type="range" min="70" max="130" step="5" value="100"><output id="readerBrightnessValue">100%</output></label>
+        <label>Brillo del lector<input id="readerBrightnessSetting" type="range" min="70" max="130" step="5" value="100"><output id="readerBrightnessValue" for="readerBrightnessSetting">100%</output></label>
         <label>Fondo del lector<select id="readerBackgroundSetting"><option value="black">Negro</option><option value="gray">Gris</option><option value="white">Blanco</option></select></label>
       </div>
       <div class="linked-folder-card">
         <div><strong>Carpeta vinculada</strong><small id="linkedFolderLabel">Ninguna</small></div>
         <div class="button-row"><button id="linkFolderBtn" class="secondary-btn" type="button">Vincular carpeta</button><button id="syncFolderBtn" class="secondary-btn" type="button">Actualizar</button></div>
       </div>
-      <div id="v3Stats" class="v3-stats" aria-label="Estadísticas locales"></div>`;
+      <div id="v3Stats" class="v3-stats" role="group" aria-label="Estadísticas locales"></div>`;
     backup?.before(section) || form.querySelector('menu')?.before(section);
 
     const smart = section.querySelector('#smartTabletSetting');
@@ -225,9 +283,16 @@
     dialog.id = 'pageBrowserDialog';
     dialog.className = 'panel-dialog page-browser-dialog';
     dialog.setAttribute('aria-labelledby', 'pageBrowserTitle');
+    dialog.setAttribute('aria-describedby', 'pageBrowserNote');
     dialog.innerHTML = `<form method="dialog"><header><div><p class="dialog-kicker">LECTOR</p><h2 id="pageBrowserTitle">Páginas</h2></div><button class="icon-btn" value="cancel" aria-label="Cerrar">×</button></header><div id="pageBrowserGrid" class="page-browser-grid"></div><p id="pageBrowserNote" class="muted"></p><menu><button value="cancel" class="secondary-btn">Cerrar</button></menu></form>`;
     document.body.append(dialog);
-    dialog.addEventListener('close', () => thumbObserver?.disconnect());
+    dialog.addEventListener('close', () => {
+      thumbObserver?.disconnect();
+      document.querySelectorAll('#pageBrowserGrid .page-thumb[data-page]').forEach((node) => {
+        const item = current?.pages?.[Number(node.dataset.page)];
+        if (item && Math.abs(Number(node.dataset.page) - page) > 4) evictPage(item);
+      });
+    });
   }
 
   function openPageBrowser() {
@@ -239,8 +304,12 @@
     const grid = document.querySelector('#pageBrowserGrid');
     const note = document.querySelector('#pageBrowserNote');
     grid.replaceChildren();
-    const total = Math.min(current.pages.length, MAX_THUMBS);
-    for (let index = 0; index < total; index += 1) {
+    const pageCount = current.pages.length;
+    const windowSize = Math.min(pageCount, MAX_THUMBS);
+    const half = Math.floor(windowSize / 2);
+    const start = Math.max(0, Math.min(pageCount - windowSize, page - half));
+    const end = start + windowSize;
+    for (let index = start; index < end; index += 1) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'page-thumb';
@@ -260,7 +329,7 @@
       });
       grid.append(b);
     }
-    note.textContent = current.pages.length > MAX_THUMBS ? `Mostrando las primeras ${MAX_THUMBS} de ${current.pages.length} páginas.` : `${current.pages.length} páginas`;
+    note.textContent = pageCount > MAX_THUMBS ? `Mostrando páginas ${start + 1}–${end} de ${pageCount}, alrededor de tu posición actual.` : `${pageCount} páginas`;
     openDialog(dialog);
     thumbObserver?.disconnect();
     thumbObserver = new IntersectionObserver((entries) => entries.forEach((entry) => {
@@ -393,10 +462,12 @@
 
   function decorateLibrary() {
     applyLibraryLayout();
-    const books = new Map(loadLibrary().map((b) => [b.title, b]));
+    const libraryBooks = loadLibrary();
+    const booksById = new Map(libraryBooks.map((b) => [b.id, b]));
+    const booksByTitle = new Map(libraryBooks.map((b) => [b.title, b]));
     document.querySelectorAll('.comic-card').forEach((card) => {
       const title = card.querySelector('.card-title')?.textContent;
-      const book = books.get(title);
+      const book = booksById.get(card.dataset.bookId) || booksByTitle.get(title);
       if (!book) return;
       let badge = card.querySelector('.v3-status-badge');
       if (!badge) {
@@ -538,9 +609,9 @@
     const originalImportBackup = importBackup;
     importBackup = function v3ImportBackup(data) {
       const result = originalImportBackup(data);
-      if (data?.ultimate?.settings) { v3 = { ...v3Defaults, ...data.ultimate.settings }; saveV3(); }
-      if (data?.ultimate?.statuses && typeof data.ultimate.statuses === 'object') { statuses = data.ultimate.statuses; saveStatuses(); }
-      if (data?.ultimate?.bookPrefs && typeof data.ultimate.bookPrefs === 'object') { bookPrefs = data.ultimate.bookPrefs; saveBookPrefs(); }
+      if (data?.ultimate?.settings) { v3 = normalizeV3Settings(data.ultimate.settings); saveV3(); }
+      if (data?.ultimate?.statuses) { statuses = normalizeStatuses(data.ultimate.statuses); saveStatuses(); }
+      if (data?.ultimate?.bookPrefs) { bookPrefs = normalizeBookPrefs(data.ultimate.bookPrefs); saveBookPrefs(); }
       applyLibraryLayout(); applyReaderAppearance(); updateSmartButton();
       return result;
     };
@@ -625,9 +696,9 @@
     installResize();
     applyReaderAppearance();
     document.querySelector('#fitBtn')?.addEventListener('click', () => setTimeout(() => saveCurrentBookPref({ fit }), 0));
-    document.body.dataset.ultimate = '3.0';
+    document.body.dataset.ultimate = '3.1';
   } catch (error) {
-    console.error('Comic Reader 404 Ultimate 3.0 enhancements:', error);
+    console.error('Comic Reader 404 Ultimate 3.1 enhancements:', error);
     showToast?.('Las mejoras Ultimate no pudieron iniciarse; el lector básico sigue disponible.');
   }
 })();

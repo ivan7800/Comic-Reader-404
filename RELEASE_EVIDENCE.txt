@@ -1,25 +1,24 @@
-Comic Reader 404 Ultimate v3.0.0
+Comic Reader 404 Ultimate v3.1.0 — Release Evidence
+Date: 2026-08-15
 
-Release gate esperado:
-  RELEASE CHECK: PASS
+PASS:
+- unit.test.mjs
+- cbz-smoke.mjs
+- cbr-smoke.mjs
+- static-check.py
+- contrast-check.py
+- runtime-smoke.py
+- ultimate-smoke.py
+- CBR vendor Git blob integrity
+- CSS parse: 0 errors
+- manifest JSON
+- GitHub Actions workflow YAML
+- shell syntax
+- HTTP subpath resources: 200
+- RELEASE CHECK: PASS
 
-Cobertura local confirmada:
-  unit.test.mjs: PASS
-  cbz-smoke.mjs: PASS
-  cbr-smoke.mjs: PASS
-  static-check.py: PASS
-  contrast-check.py: PASS
-  runtime-smoke.py: PASS
-  ultimate-smoke.py: PASS
-  CBR vendor SHA-1: 980c8c61186c66ceb29e82046c596d211762e8dd
-
-Ultimate smoke cubre:
-  - AUTO tablet landscape/portrait
-  - doble página física (portada sola)
-  - Grid/List/Shelf
-  - estado manual + filtro
-  - responsive sin overflow
-
-Pendiente fuera de este entorno:
-  - hardware iPhone/iPad/Android físico
-  - ejecución completa axe/Lighthouse si las dependencias QA no están disponibles
+NOT CLAIMED AS PASS IN THIS ENVIRONMENT:
+- full HTTP Playwright E2E: ERR_BLOCKED_BY_ADMINISTRATOR on localhost
+- axe-core: npm QA dependencies unavailable after install timeout
+- Lighthouse: npm QA dependencies unavailable after install timeout
+- physical iPhone/iPad/Android tests
