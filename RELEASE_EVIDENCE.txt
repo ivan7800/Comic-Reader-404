@@ -1,10 +1,25 @@
-Comic Reader 404 v2.5.0
-RELEASE CHECK: PASS
-runtime-smoke: PASS · botón Importar + CBZ + lector + ajustes + móvil
-CBZ smoke: PASS
-CBR smoke: PASS
-Static check: PASS
-Contrast check: PASS
-CBR vendor Git blob SHA-1: 980c8c61186c66ceb29e82046c596d211762e8dd
-Runtime production: classic bundle; no type="module" in index.html
-PWA recovery: reset.html
+Comic Reader 404 Ultimate v3.0.0
+
+Release gate esperado:
+  RELEASE CHECK: PASS
+
+Cobertura local confirmada:
+  unit.test.mjs: PASS
+  cbz-smoke.mjs: PASS
+  cbr-smoke.mjs: PASS
+  static-check.py: PASS
+  contrast-check.py: PASS
+  runtime-smoke.py: PASS
+  ultimate-smoke.py: PASS
+  CBR vendor SHA-1: 980c8c61186c66ceb29e82046c596d211762e8dd
+
+Ultimate smoke cubre:
+  - AUTO tablet landscape/portrait
+  - doble página física (portada sola)
+  - Grid/List/Shelf
+  - estado manual + filtro
+  - responsive sin overflow
+
+Pendiente fuera de este entorno:
+  - hardware iPhone/iPad/Android físico
+  - ejecución completa axe/Lighthouse si las dependencias QA no están disponibles

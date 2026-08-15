@@ -34,6 +34,13 @@ node tests/cbz-smoke.mjs
 node tests/cbr-smoke.mjs
 python3 tests/static-check.py
 python3 tests/contrast-check.py
+if [ -x /usr/bin/chromium ] && python3 -c 'import playwright' >/dev/null 2>&1; then
+  python3 tests/runtime-smoke.py
+  python3 tests/ultimate-smoke.py
+else
+  printf '%s
+' 'Browser smoke: SKIP · Chromium/Playwright no disponible en este entorno.'
+fi
 
 printf 'CBR vendor: PASS · %s\n' "$ACTUAL_UNRAR"
 printf '%s\n' 'RELEASE CHECK: PASS'
